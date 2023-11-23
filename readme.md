@@ -5,7 +5,10 @@ both up all compoments with docker-compose
 docker-compose up -d
 
 # or
- docker-compose down && sudo rm -rf -d ./puppet* && docker-compose up
+docker-compose up -d
+
+# for volume cleanup
+#  docker-compose down && sudo rm -rf -d ./puppet* && docker-compose up
 ```
 
 
@@ -41,19 +44,10 @@ FROM pg_stat_activity
 WHERE state = 'active';
 ```
 
-## check puppetserver/webinterface is running
-```bash
+## check puppetdb-webinterface is running
 
-docker exec -it puppetplay-puppet-1 bash
-```
-in the container
+http://localhost:8080/pdb/dashboard/index.html
 
-```bash
-netstat -tulpen
-Active Internet connections (only servers)
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       User       Inode      PID/Program name    
-tcp        0      0 0.0.0.0:8140            0.0.0.0:*               LISTEN      999        55596      -                   
-```
-
-tunnel the puppetserver port to the host
-```bash
+## check puppet dashboard is running
+Also this dashboard is usefull to check the puppetserver state in general: 
+http://localhost:8088/inventory

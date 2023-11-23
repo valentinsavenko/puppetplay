@@ -18,9 +18,7 @@ services:
     environment:
       - PUPPETSERVER_HOSTNAME=puppet
       - PUPPETDB_SERVER_URLS=https://puppetdb:8081
-    depends_on:
-      puppetdb:
-        condition: service_healthy
+
   puppetdb:
     image: puppet/puppetdb
     hostname: puppetdb
@@ -34,6 +32,10 @@ services:
     environment:
       - POSTGRES_HOSTNAME=postgres
       - POSTGRES_PORT=5432
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   postgres:
     image: postgres
     hostname: postgres
