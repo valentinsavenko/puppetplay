@@ -1,0 +1,92 @@
+version: "3"
+
+networks:
+  puppet001:
+    driver: bridge
+
+services:
+  puppet:
+    image: puppet/puppetserver
+    hostname: puppet
+    networks:
+      - puppet001
+    # volumes:
+    #   - ./puppetcode:/etc/puppetlabs/code
+    #   - ./puppetserver:/etc/puppetlabs/puppet/ssl
+    ports:
+      - "8140:8140"
+    environment:
+      - PUPPETSERVER_HOSTNAME=puppet
+      - PUPPETDB_SERVER_URLS=https://puppetdb:8081
+    depends_on:
+      puppetdb:
+        condition: service_healthy
+  puppetdb:
+    image: puppet/puppetdb
+    hostname: puppetdb
+    networks:
+      - puppet001
+    # volumes:
+    #   - ./puppetdb:/etc/puppetlabs/puppetdb/ssl
+    ports:
+      - "8081:8081"
+      - "8080:8080"
+    environment:
+      - POSTGRES_HOSTNAME=postgres
+      - POSTGRES_PORT=5432
+  postgres:
+    image: postgres
+    hostname: postgres
+    networks:
+      - puppet001
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=puppetdb
+      - POSTGRES_USER=puppetdb
+      - POSTGRES_DB=puppetdb
+  puppet-agent1:
+    image: puppet/puppet-agent
+    hostname: puppet-agent1
+    networks:
+      - puppet001
+    # volumes:
+    #   - ./puppetagent1:/etc/puppetlabs/puppet/ssl
+    ports:
+      - "9140:8140"
+    environment:
+      - PUPPET_SERVER=puppet
+    depends_on:
+      puppet:
+        condition: service_healthy
+  puppet-agent2:
+    image: puppet/puppet-agent
+    hostname: puppet-agent2
+    networks:
+      - puppet001
+    # volumes:
+    #   - ./puppetagent2:/etc/puppetlabs/puppet/ssl
+    ports:
+      - "10140:8140"
+    environment:
+      - PUPPET_SERVER=puppet
+    depends_on:
+      puppet:
+        condition: service_healthy
+  
+  puppetboard:
+    image: ghcr.io/voxpupuli/puppetboard
+    stdin_open: true
+    tty: true
+    environment:
+      - PUPPETDB_HOST=puppetdb
+      - PUPPETDB_PORT=8080
+      - PUPPETBOARD_PORT=8088
+      - SECRET_KEY=b'_5#y2L"F4Q8z\n\xec]/'
+    networks:
+      - puppet001
+    ports:
+      - "8088:8088"
+    depends_on:
+      puppetdb:
+        condition: service_healthy
