@@ -1,3 +1,10 @@
+# prerequisites
+## install vagrant dependencies
+```bash
+vagrant plugin install vagrant-docker-compose
+   # vagrant plugin install vagrant-vbguest
+```
+
 # setup
 both up all compoments with docker-compose
 ```bash
@@ -51,3 +58,16 @@ http://localhost:8080/pdb/dashboard/index.html
 ## check puppet dashboard is running
 Also this dashboard is usefull to check the puppetserver state in general: 
 http://localhost:8088/inventory
+
+
+
+# vagrant for target nodes
+https://developer.hashicorp.com/vagrant/downloads
+
+```bash
+export VAGRANT_WSL_ENABLE_WINDOWS_ACCESS="1"
+export PATH="$PATH:/mnt/c/Program Files/Oracle/VirtualBox"
+"/mnt/c/Users/valen/workspace"
+export VAGRANT_WSL_WINDOWS_ACCESS_USER_HOME_PATH=$HOME
+
+```

@@ -8,8 +8,6 @@ services:
   puppet:
     image: puppet/puppetserver
     hostname: puppet
-    networks:
-      - puppet001
     # volumes:
     #   - ./puppetcode:/etc/puppetlabs/code
     #   - ./puppetserver:/etc/puppetlabs/puppet/ssl
@@ -22,8 +20,6 @@ services:
   puppetdb:
     image: puppet/puppetdb
     hostname: puppetdb
-    networks:
-      - puppet001
     # volumes:
     #   - ./puppetdb:/etc/puppetlabs/puppetdb/ssl
     ports:
@@ -34,47 +30,17 @@ services:
       - POSTGRES_PORT=5432
     depends_on:
       postgres:
-        condition: service_healthy
+        condition: service_started
 
   postgres:
     image: postgres
     hostname: postgres
-    networks:
-      - puppet001
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=puppetdb
       - POSTGRES_USER=puppetdb
       - POSTGRES_DB=puppetdb
-  puppet-agent1:
-    image: puppet/puppet-agent
-    hostname: puppet-agent1
-    networks:
-      - puppet001
-    # volumes:
-    #   - ./puppetagent1:/etc/puppetlabs/puppet/ssl
-    ports:
-      - "9140:8140"
-    environment:
-      - PUPPET_SERVER=puppet
-    depends_on:
-      puppet:
-        condition: service_healthy
-  puppet-agent2:
-    image: puppet/puppet-agent
-    hostname: puppet-agent2
-    networks:
-      - puppet001
-    # volumes:
-    #   - ./puppetagent2:/etc/puppetlabs/puppet/ssl
-    ports:
-      - "10140:8140"
-    environment:
-      - PUPPET_SERVER=puppet
-    depends_on:
-      puppet:
-        condition: service_healthy
   
   puppetboard:
     image: ghcr.io/voxpupuli/puppetboard
@@ -85,8 +51,6 @@ services:
       - PUPPETDB_PORT=8080
       - PUPPETBOARD_PORT=8088
       - SECRET_KEY=b'_5#y2L"F4Q8z\n\xec]/'
-    networks:
-      - puppet001
     ports:
       - "8088:8088"
     depends_on:

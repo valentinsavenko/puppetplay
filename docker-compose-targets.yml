@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  
+  puppet-agent:
+    image: puppet/puppet-agent
+    hostname: puppet-agent
+    ports:
+      - "8140:8140"
+    environment:
+      - PUPPET_SERVER=puppet
